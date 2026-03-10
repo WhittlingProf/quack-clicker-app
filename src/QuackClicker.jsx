@@ -875,7 +875,8 @@ export default function QuackClicker() {
   );
 
   return (
-    <div style={{ background: "#0d1b2a", height: "100vh", fontFamily: "'Fredoka', sans-serif", color: "#e0e8f0", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+    <div style={{ background: "#060e18", height: "100vh", overflow: "hidden" }}>
+    <div style={{ background: "#0d1b2a", height: "100vh", fontFamily: "'Fredoka', sans-serif", color: "#e0e8f0", overflow: "hidden", display: "flex", flexDirection: "column", maxWidth: 900, margin: "0 auto", borderLeft: "1px solid rgba(255,255,255,0.03)", borderRight: "1px solid rgba(255,255,255,0.03)" }}>
       <style>{STYLES}</style>
 
       {/* Milestone popup */}
@@ -1168,6 +1169,7 @@ export default function QuackClicker() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
