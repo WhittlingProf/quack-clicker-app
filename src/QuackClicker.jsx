@@ -510,6 +510,72 @@ const STYLES = `
   from { width: 100%; }
   to { width: 0%; }
 }
+
+/* ── RESPONSIVE LAYOUT ── */
+.qc-outer {
+  background: #060e18; height: 100vh; overflow: hidden;
+}
+.qc-game {
+  background: #0d1b2a; height: 100vh; font-family: 'Fredoka', sans-serif;
+  color: #e0e8f0; overflow: hidden; display: flex; flex-direction: column;
+  max-width: 900px; margin: 0 auto;
+  border-left: 1px solid rgba(255,255,255,0.03);
+  border-right: 1px solid rgba(255,255,255,0.03);
+}
+.qc-main {
+  display: flex; flex: 1; overflow: hidden;
+}
+.qc-pond-wrap {
+  flex: 1 1 55%; padding: 8px 12px 12px; display: flex; flex-direction: column; min-width: 0;
+}
+.qc-shop-panel {
+  flex: 0 0 320px; border-left: 1px solid rgba(255,255,255,0.05);
+  display: flex; flex-direction: column; background: rgba(0,0,0,0.12); overflow: hidden;
+}
+.qc-shop-toggle {
+  display: none; position: fixed; bottom: 16px; right: 16px; z-index: 600;
+  background: linear-gradient(135deg, #FFD700, #F0A000); border: none;
+  border-radius: 50%; width: 56px; height: 56px; cursor: pointer;
+  font-size: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  font-family: 'Fredoka', sans-serif; color: #1a2a3a;
+  transition: transform 0.2s;
+}
+.qc-shop-toggle:hover { transform: scale(1.1); }
+.qc-shop-badge-mobile {
+  position: absolute; top: -4px; right: -4px;
+  background: #FF6B6B; color: #fff; border-radius: 50%;
+  width: 20px; height: 20px; font-size: 0.65rem;
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.qc-header { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.25); flex-shrink: 0; gap: 8px; flex-wrap: wrap; }
+
+/* ── MOBILE (<640px) ── */
+@media (max-width: 640px) {
+  .qc-main { flex-direction: column; position: relative; }
+  .qc-pond-wrap { flex: 1; padding: 4px 6px 6px; }
+  .qc-shop-panel {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    flex: none; height: 55vh; z-index: 500;
+    border-left: none; border-top: 2px solid rgba(255,215,0,0.3);
+    border-radius: 16px 16px 0 0;
+    background: rgba(13,27,42,0.97); backdrop-filter: blur(10px);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+  }
+  .qc-shop-panel.open { transform: translateY(0); }
+  .qc-shop-toggle { display: flex; align-items: center; justify-content: center; }
+  .qc-header { padding: 6px 10px; }
+  .qc-header .qc-splash-display { font-size: 1.1rem !important; }
+  .qc-bubble { min-width: 48px; min-height: 48px; }
+  .qc-pond-duck img { width: 44px !important; height: 44px !important; }
+  .qc-challenge-prompt { font-size: 1.5rem !important; }
+  .qc-diff-btn { padding: 4px 8px !important; font-size: 0.72rem !important; }
+}
+
+/* ── TABLET (640-900px) ── */
+@media (min-width: 641px) and (max-width: 900px) {
+  .qc-shop-panel { flex: 0 0 260px; }
+}
 `;
 
 // ─── MAIN GAME ──────────────────────────────────────────────────
@@ -524,6 +590,7 @@ export default function QuackClicker() {
   const [statsOpen, setStatsOpen] = useState(false);
   const [hoveredDuck, setHoveredDuck] = useState(null);
   const [paused, setPaused] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
   const [combo, setCombo] = useState(0);
   const [comboTimer, setComboTimer] = useState(null);
   const [fever, setFever] = useState(false);
@@ -875,8 +942,8 @@ export default function QuackClicker() {
   );
 
   return (
-    <div style={{ background: "#060e18", height: "100vh", overflow: "hidden" }}>
-    <div style={{ background: "#0d1b2a", height: "100vh", fontFamily: "'Fredoka', sans-serif", color: "#e0e8f0", overflow: "hidden", display: "flex", flexDirection: "column", maxWidth: 900, margin: "0 auto", borderLeft: "1px solid rgba(255,255,255,0.03)", borderRight: "1px solid rgba(255,255,255,0.03)" }}>
+    <div className="qc-outer">
+    <div className="qc-game">
       <style>{STYLES}</style>
 
       {/* Milestone popup */}
@@ -890,12 +957,12 @@ export default function QuackClicker() {
       )}
 
       {/* ── HEADER ──────────────────────────────────────────── */}
-      <div style={{ padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.25)", flexShrink: 0, gap: 8, flexWrap: "wrap" }}>
+      <div className="qc-header">
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <img src={DUCK_IMAGES.puddle} alt="" style={{ width: 32, height: 32 }} />
           <div>
             <div style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: 1.5, color: "#5a7a9a" }}>Splashes</div>
-            <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#4FC3F7" }}>💧 {fmt(state.splashes)}</div>
+            <div className="qc-splash-display" style={{ fontSize: "1.4rem", fontWeight: 700, color: "#4FC3F7" }}>💧 {fmt(state.splashes)}</div>
           </div>
         </div>
         <div style={{ textAlign: "center" }}>
@@ -916,10 +983,10 @@ export default function QuackClicker() {
       </div>
 
       {/* ── MAIN ────────────────────────────────────────────── */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div className="qc-main">
 
         {/* POND */}
-        <div style={{ flex: "1 1 55%", padding: "8px 12px 12px", display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <div className="qc-pond-wrap">
           <div ref={pondRef} className="qc-pond" style={{ flex: 1, minHeight: 250 }}>
 
             {/* Fever overlay */}
@@ -958,7 +1025,7 @@ export default function QuackClicker() {
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <span style={{ fontSize: "0.8rem", color: "#6a9ab8", textTransform: "uppercase", letterSpacing: 1.5, fontWeight: 600 }}>Find</span>
-                    <span style={{ fontSize: "1.8rem", fontWeight: 700, color: "#4FC3F7", letterSpacing: 1 }}>{challenge.prompt}</span>
+                    <span className="qc-challenge-prompt" style={{ fontSize: "1.8rem", fontWeight: 700, color: "#4FC3F7", letterSpacing: 1 }}>{challenge.prompt}</span>
                     {streak > 0 && <span style={{ fontSize: "0.9rem", color: "#FFD700", fontWeight: 700 }}>🔥{streak}</span>}
                   </div>
                   {/* Countdown bar */}
@@ -975,7 +1042,7 @@ export default function QuackClicker() {
                   {MATH_LEVELS.map(ml => {
                     const active = (state.mathLevel || 0) === ml.id;
                     return (
-                      <button key={ml.id} onClick={() => setMathLevel(ml.id)} style={{
+                      <button key={ml.id} className="qc-diff-btn" onClick={() => setMathLevel(ml.id)} style={{
                         background: active ? "rgba(79,195,247,0.2)" : "rgba(0,15,30,0.75)",
                         border: `1.5px solid ${active ? "rgba(79,195,247,0.5)" : "rgba(255,255,255,0.1)"}`,
                         borderRadius: 8, padding: "5px 12px", cursor: "pointer",
@@ -1069,8 +1136,14 @@ export default function QuackClicker() {
           </div>
         </div>
 
+        {/* MOBILE SHOP TOGGLE */}
+        <button className="qc-shop-toggle" onClick={() => setShopOpen(!shopOpen)} style={{ position: "relative" }}>
+          {shopOpen ? "✕" : "🛒"}
+          {nUpgrades > 0 && !shopOpen && <span className="qc-shop-badge-mobile">{nUpgrades}</span>}
+        </button>
+
         {/* SHOP */}
-        <div style={{ flex: "0 0 320px", borderLeft: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.12)", overflow: "hidden" }}>
+        <div className={`qc-shop-panel ${shopOpen ? "open" : ""}`}>
           <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
             {[["ducks", "Ducks", 0], ["upgrades", "Upgrades", nUpgrades]].map(([k, l, n]) => (
               <button key={k} className={`qc-tab ${shopTab === k ? "active" : ""}`} onClick={() => setShopTab(k)} style={{ position: "relative", flex: 1 }}>
